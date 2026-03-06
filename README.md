@@ -1,7 +1,9 @@
 # Employee Management System (Web 2 & Web 3)
 
 This repository contains a **bare-bones employee management system** designed for both traditional Web 2 applications and future Web 3 implementations.  
-The current version is built using the **MERN stack** with **MongoDB** for storage, **Express** for backend APIs, and **React (Vite + Router v7)** for the frontend.  
+
+The current version is built using the **MERN stack** with **MongoDB** for storage, **Express** for backend APIs, and **React (Vite + Router v7)** for the frontend. 
+
 The next version will extend this functionality by implementing smart contracts in **Solidity**, allowing decentralized management on the Ethereum blockchain.
 
 ---
