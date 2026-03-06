@@ -1,46 +1,26 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import cors from 'cors';
+
+import authRoutes from './routes/auth.js';
+import employeeRoutes from './routes/employees.js';
 
 dotenv.config();
 const app = express();
+
+app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/employees';
+mongoose.connect(mongoUri)
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error(err));
 
-// Employee model
-const employeeSchema = new mongoose.Schema({
-  eID: { type: String, unique: true },
-  name: String,
-  department: String,
-  role: String,
-  createdAt: { type: Date, default: Date.now }
-});
-
-const Employee = mongoose.model('Employee', employeeSchema);
-
 // Routes
-app.post('/employees', async (req, res) => {
-  try {
-    const employee = await Employee.create(req.body);
-    res.json(employee);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
+app.use('/auth', authRoutes);
+app.use('/employees', employeeRoutes);
 
-app.get('/employees', async (req, res) => {
-  const employees = await Employee.find();
-  res.json(employees);
-});
-
-app.delete('/employees/:id', async (req, res) => {
-  await Employee.findByIdAndDelete(req.params.id);
-  res.json({ message: 'Employee removed successfully' });
-});
-
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));

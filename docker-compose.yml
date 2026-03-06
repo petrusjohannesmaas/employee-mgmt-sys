@@ -1,6 +1,6 @@
 services:
   mongo:
-    image: mongo:6
+    image: mongo:latest
     container_name: mongo
     ports:
       - "27017:27017"
@@ -18,7 +18,7 @@ services:
       - MONGO_URI=mongodb://mongo:27017/employees
 
   frontend:
-    build: ./client
+    build: ./frontend
     container_name: frontend
     ports:
       - "3000:3000"
