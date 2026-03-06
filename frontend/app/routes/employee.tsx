@@ -12,14 +12,14 @@ export default function EmployeeProfile() {
         lastName: '',
         email: '',
         role: 'employee',
-        status: 'active'
+        status: 'active',
+        password: '' // used during creation only
     });
 
     const [loading, setLoading] = useState(!isNew);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
-    const [salesClicks, setSalesClicks] = useState(0);
     const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
@@ -75,18 +75,6 @@ export default function EmployeeProfile() {
         }
     };
 
-    const handleIncrementSales = async () => {
-        if (isNew) return;
-        try {
-            await apiFetch(`/employees/${id}/increment`, { method: 'POST' });
-            setSalesClicks(prev => prev + 1);
-            setSuccess("Sale activity logged successfully!");
-            setTimeout(() => setSuccess(""), 3000);
-        } catch (err: any) {
-            setError(err.message || "Failed to log activity");
-        }
-    };
-
     if (loading) return <div className="p-8 text-center text-slate-500">Loading...</div>;
 
     return (
@@ -107,15 +95,6 @@ export default function EmployeeProfile() {
                         <h2 className="text-2xl font-bold text-slate-900">
                             {isNew ? 'Create Employee' : 'Employee Profile'}
                         </h2>
-
-                        {!isNew && (
-                            <button
-                                onClick={handleIncrementSales}
-                                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-primary-700 bg-primary-100 hover:bg-primary-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
-                            >
-                                Log Sale ({salesClicks})
-                            </button>
-                        )}
                     </div>
 
                     {error && <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6 text-sm">{error}</div>}
@@ -185,6 +164,21 @@ export default function EmployeeProfile() {
                                     <option value="inactive">Inactive</option>
                                 </select>
                             </div>
+
+                            {isNew && isAdmin && (
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700">Initial Password</label>
+                                    <input
+                                        type="password"
+                                        required
+                                        className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm px-3 py-2 border"
+                                        value={employee.password || ''}
+                                        onChange={e => setEmployee({ ...employee, password: e.target.value })}
+                                        minLength={6}
+                                    />
+                                    <p className="mt-1 text-xs text-slate-500">Required for the user to be able to login.</p>
+                                </div>
+                            )}
                         </div>
 
                         {isAdmin && (

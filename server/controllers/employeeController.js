@@ -1,5 +1,7 @@
 import { Employee } from '../models/Employee.js';
 import { ActivityLog } from '../models/ActivityLog.js';
+import { User } from '../models/User.js';
+import bcrypt from 'bcryptjs';
 
 export const getEmployees = async (req, res) => {
     try {
@@ -24,7 +26,26 @@ export const getEmployeeById = async (req, res) => {
 
 export const createEmployee = async (req, res) => {
     try {
-        const newEmployee = await Employee.create(req.body);
+        const { password, ...employeeData } = req.body;
+
+        // Validate password for new employees
+        if (!password) {
+            return res.status(400).json({ error: 'Password is required to create a new employee' });
+        }
+
+        // 1. Create the Employee
+        const newEmployee = await Employee.create(employeeData);
+
+        // 2. Hash Password and Create the User representation
+        const salt = await bcrypt.genSalt(10);
+        const passwordHash = await bcrypt.hash(password, salt);
+
+        await User.create({
+            email: newEmployee.email, // using same email for the User document
+            passwordHash,
+            employeeId: newEmployee._id,
+            role: newEmployee.role
+        });
 
         await ActivityLog.create({
             employeeId: req.user.employeeId, // Assuming admin who creates it
@@ -67,19 +88,5 @@ export const deleteEmployee = async (req, res) => {
         res.json({ message: 'Employee disabled successfully' });
     } catch (error) {
         res.status(500).json({ error: 'Server error deleting employee' });
-    }
-};
-
-export const incrementActivity = async (req, res) => {
-    try {
-        const employeeId = req.params.id;
-        // Log a sales increment
-        const log = await ActivityLog.create({
-            employeeId: employeeId,
-            action: 'Sales incremented'
-        });
-        res.json(log);
-    } catch (error) {
-        res.status(500).json({ error: 'Error logging activity' });
     }
 };

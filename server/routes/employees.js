@@ -4,8 +4,7 @@ import {
     getEmployeeById,
     createEmployee,
     updateEmployee,
-    deleteEmployee,
-    incrementActivity
+    deleteEmployee
 } from '../controllers/employeeController.js';
 import { authenticate, requireRole } from '../middleware/auth.js';
 
@@ -22,7 +21,6 @@ router.post('/', requireRole(['admin']), createEmployee);
 router.put('/:id', requireRole(['admin']), updateEmployee);
 router.delete('/:id', requireRole(['admin']), deleteEmployee);
 
-// Activity logging endpoint
-router.post('/:id/increment', requireRole(['admin', 'manager', 'employee']), incrementActivity);
+
 
 export default router;
