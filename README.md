@@ -19,50 +19,11 @@ The next version will extend this functionality by implementing smart contracts 
 
 ## Code Overview
 
-The application provides essential employee management functionality, including user authentication and CRUD operations. Below is an explanation of key parts of the code:
+The application provides essential employee management functionality, including user authentication and CRUD operations.
 
 ### Authentication System
+
 The system implements a basic authentication mechanism where an admin logs in using predefined credentials. Sessions can be managed via tokens or cookies.
-
-```js
-// Example Express route
-app.post('/login', (req, res) => {
-  const { username, password } = req.body;
-  if (username === 'admin' && password === 'password') {
-    res.json({ success: true, role: 'admin' });
-  } else {
-    res.status(401).json({ error: 'Invalid credentials' });
-  }
-});
-```
-
-### Employee Data Management
-The system enables adding, reading, and deleting employees from the database while enforcing role-based authorization.
-
-#### Insert Employee:
-```js
-app.post('/employees', async (req, res) => {
-  const { eID, name, department } = req.body;
-  await Employee.create({ eID, name, department });
-  res.json({ message: 'Employee inserted successfully' });
-});
-```
-
-#### Read Employee Data:
-```js
-app.get('/employees', async (req, res) => {
-  const employees = await Employee.find();
-  res.json(employees);
-});
-```
-
-#### Delete Employee:
-```js
-app.delete('/employees/:id', async (req, res) => {
-  await Employee.findByIdAndDelete(req.params.id);
-  res.json({ message: 'Employee removed successfully' });
-});
-```
 
 ---
 
